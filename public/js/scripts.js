@@ -1,18 +1,3 @@
-const cardList = [
-  {
-    title: "Kitten 2",
-    image: "images/kitten.jpg",
-    link: "About Kitten 2",
-    description: "Demo description about kitten 2"
-  },
-  {
-    title: "Kitten 3",
-    image: "images/kitten.jpg",
-    link: "About Kitten 3",
-    description: "Demo description about kitten 3"
-  }
-];
-
 const clickMe = () => {
   alert("Thanks for clicking me. Hope you have a nice day!");
 };
@@ -27,8 +12,10 @@ const submitForm = () => {
 };
 
 const addCards = (items) => {
+  $("#card-section").empty(); // delete HTML default card
+
   items.forEach((item) => {
-    let itemToAppend =
+    const itemToAppend =
       '<div class="col s4 center-align">' +
       '<div class="card medium">' +
       '<div class="card-image waves-effect waves-block waves-light">' +
@@ -38,17 +25,13 @@ const addCards = (items) => {
       '<span class="card-title activator grey-text text-darken-4">' +
       item.title +
       '<i class="material-icons right">more_vert</i></span>' +
-      '<p><a href="#">' +
-      item.link +
-      "</a></p>" +
+      '<p><a href="#">' + item.link + "</a></p>" +
       "</div>" +
       '<div class="card-reveal">' +
       '<span class="card-title grey-text text-darken-4">' +
       item.title +
       '<i class="material-icons right">close</i></span>' +
-      '<p class="card-text">' +
-      item.description +
-      "</p>" +
+      '<p class="card-text">' + item.description + "</p>" +
       "</div>" +
       "</div>" +
       "</div>";
@@ -57,24 +40,20 @@ const addCards = (items) => {
   });
 };
 
+const loadCards = async () => {
+  const res = await fetch("/api/cards");
+  if (!res.ok) throw new Error(`GET /api/cards failed: ${res.status}`);
+  const items = await res.json();
+  addCards(items);
+};
+
 $(document).ready(function () {
-
   $(".materialboxed").materialbox();
-
-
   $(".modal").modal();
 
+  $("#formSubmit").click(() => submitForm());
+  $("#clickMeButton").click(() => clickMe());
 
-  $("#formSubmit").click(() => {
-    submitForm();
-  });
-
-  $("#clickMeButton").click(() => {
-    clickMe();
-  });
-
-
-  addCards(cardList);
+  loadCards().catch(console.error);
 });
-
 
